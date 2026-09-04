@@ -7,7 +7,7 @@ Método                 | raíz      | iteraciones | Observaciones |
                                                     #  21 practicamente solo
                                                     se repiten datos hasta la 
                                                     iteracion # 28 
-2. False Position      |
+2. False Position      |0.567143   |     7          | Se encontro la raiz bastante rapido 
 3. Brent               |
 4. Newton              |
 5. Secante             |
@@ -21,7 +21,7 @@ Método                 | raíz     | iteraciones | Observaciones |
                                                     #  21 practicamente solo
                                                     se repiten datos hasta la 
                                                     iteracion # 29
-2. False Position      |
+2. False Position      |0.20164    |   8        | Se encontro la raiz bastante rapido 
 3. Brent               |
 4. Newton              |
 5. Secante             |
