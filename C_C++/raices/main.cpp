@@ -5,11 +5,11 @@
 #include <gsl/gsl_errno.h> // se encarga de la gestion de errores
 
 double f(double x, void *params) {  // funcion a la que se le busca la raiz
-  return 0;             // se puede cambiar por cualquier funcion que se desee
+  return x*x*x - 5*x + 1;             // se puede cambiar por cualquier funcion que se desee
 }
 
 int main() {            // funcion principal
-  const gsl_root_fsolver_type *T;  
+  const gsl_root_fsolver_type *T;   // se encarga de definir el tipo de solver que se va a utilizar
   gsl_root_fsolver *s; 
   gsl_function F; 
   F.function = &f;  
@@ -17,7 +17,7 @@ int main() {            // funcion principal
   double x_lo = 0.0;
   double x_hi = 1.0;
   T = gsl_root_fsolver_bisection;
-  s = gsl_root_fsolver_alloc(T);%
+  s = gsl_root_fsolver_alloc(T);
   gsl_root_fsolver_set(s, &F, x_lo, x_hi);
   std::cout << "iter\t" << "inf\t" << "sup\t" << "raíz\n";
 
@@ -28,7 +28,7 @@ int main() {            // funcion principal
 
   do {
     iter++;
-    status = gsl_root_fsolver_iterate(s);  // se encarga de iterar el metodo de biseccion
+    status = gsl_root_fsolver_iterate(s);  // se encarga de iterar
     r = gsl_root_fsolver_root(s); // se encarga de almacenar la raiz encontrada
     x_lo = gsl_root_fsolver_x_lower(s);  // se encarga de almacenar el limite inferior del intervalo
     x_hi = gsl_root_fsolver_x_upper(s);  // se encarga de almacenar el limite superior del intervalo
