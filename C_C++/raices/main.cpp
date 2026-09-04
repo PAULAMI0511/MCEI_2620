@@ -4,15 +4,17 @@
 #include <gsl/gsl_roots.h> // se encarga de la busqueda de raices
 #include <gsl/gsl_errno.h> // se encarga de la gestion de errores
 
-double f(double x, void *params) {  // funcion a la que se le busca la raiz
-  return std::exp(-x) - x;             // f(x) = e^(-x) - x
+double f(double x, void *params) {  
+  return x*x*x - 5*x + 1;             
 }
+
 double df(double x, void *params) {  
-  return -std::exp(-x) - 1.0;          // Derivada de e^(-x) - x             
+  return 3*x*x - 5; // Derivada de x^3 - 5x + 1             
 }
+
 void fdf(double x, void *params, double *y, double *dy) {
-  *y = std::exp(-x) - x;
-  *dy = -std::exp(-x) - 1.0;
+  *y = x*x*x - 5*x + 1;
+  *dy = 3*x*x - 5;
 }
 
 int main() {            // funcion principal

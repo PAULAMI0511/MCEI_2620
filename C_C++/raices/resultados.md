@@ -12,10 +12,12 @@ Método                 | raíz      | iteraciones | Observaciones |
 3. Brent               |0.567143   |     6        | Curiosos es la primera que 
                                                     las 2 ecuaciones tiene la
                                                    misma cantidad de iteraciones 
-4. Newton              |
-5. Secante             |
-6. Steffenson          |
-
+4. Newton              | 0.567143   |  4         | muy rapido pero mas largo  
+                                                  por las derivadas 
+5. Secante             | 0.567143   |  4         | muy rapido pero mas largo  
+                                                  por las derivadas          
+6. Steffenson          | 0.567143   |  4         | muy rapido pero mas largo  
+                                                  por las derivadas
 Resultados  f(x) =x^3 −5x+1
 ---------------------------------------------
 Método                 | raíz     | iteraciones | Observaciones |
@@ -28,6 +30,8 @@ Método                 | raíz     | iteraciones | Observaciones |
                                                   rapido 
 3. Brent               | 0.20164   | 6          | Es 3 veces mas rapido que la
                                                  de biseccion 
-4. Newton              |
-5. Secante             |
-6. Steffenson          |
+4. Newton              |0.20164     | 4         |Menor iteraciones
+5. Secante             |0.20154     | 5         | muy rapido pero mas largo  
+                                                  por las derivadas
+6. Steffenson          |0.20154     | 5         | muy rapido pero mas largo  
+                                                  por las derivadas
