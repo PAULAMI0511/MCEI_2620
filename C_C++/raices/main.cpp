@@ -5,7 +5,7 @@
 #include <gsl/gsl_errno.h> // se encarga de la gestion de errores
 
 double f(double x, void *params) {  // funcion a la que se le busca la raiz
-  return exp(-x) - x;             // se puede cambiar por cualquier funcion que se desee
+  return x*x*x - 5*x + 1;             // se puede cambiar por cualquier funcion que se desee
 }
 
 int main() {            // funcion principal
@@ -16,7 +16,7 @@ int main() {            // funcion principal
   F.params = nullptr;
   double x_lo = 0.0;
   double x_hi = 1.0;
-  T = gsl_root_fsolver_falsepos;
+  T = gsl_root_fsolver_brent;
   s = gsl_root_fsolver_alloc(T);
   gsl_root_fsolver_set(s, &F, x_lo, x_hi);
   std::cout << "iter\t" << "inf\t" << "sup\t" << "raíz\n";
