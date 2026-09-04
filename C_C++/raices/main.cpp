@@ -5,38 +5,69 @@
 #include <gsl/gsl_errno.h> // se encarga de la gestion de errores
 
 double f(double x, void *params) {  // funcion a la que se le busca la raiz
-  return x*x*x - 5*x + 1;             // se puede cambiar por cualquier funcion que se desee
+  return std::exp(-x) - x;             // f(x) = e^(-x) - x
+}
+double df(double x, void *params) {  
+  return -std::exp(-x) - 1.0;          // Derivada de e^(-x) - x             
+}
+void fdf(double x, void *params, double *y, double *dy) {
+  *y = std::exp(-x) - x;
+  *dy = -std::exp(-x) - 1.0;
 }
 
 int main() {            // funcion principal
-  const gsl_root_fsolver_type *T;   // se encarga de definir el tipo de solver que se va a utilizar
-  gsl_root_fsolver *s; 
-  gsl_function F; 
-  F.function = &f;  
+  // NOTA: Para métodos con derivada se usa obligatoriamente gsl_root_fdfsolver_type
+  const gsl_root_fdfsolver_type *T;   
+  gsl_root_fdfsolver *s; 
+  
+  // NOTA: Para Newton se usa obligatoriamente la estructura gsl_function_fdf
+  gsl_function_fdf F; 
+  F.f = &f;  
+  F.df = &df;
+  F.fdf = &fdf;
   F.params = nullptr;
+
+  // Mantenemos tus variables de límites e inicio
   double x_lo = 0.0;
   double x_hi = 1.0;
-  T = gsl_root_fsolver_brent;
-  s = gsl_root_fsolver_alloc(T);
-  gsl_root_fsolver_set(s, &F, x_lo, x_hi);
+  double x_inicial = 0.5; // Punto de partida que requiere Newton
+
+  T = gsl_root_fdfsolver_steffenson;
+  s = gsl_root_fdfsolver_alloc(T);
+  
+  // GSL inicializa Newton con un único punto de partida
+  gsl_root_fdfsolver_set(s, &F, x_inicial);
+  
+  // Mantenemos tus mismas columnas en pantalla
   std::cout << "iter\t" << "inf\t" << "sup\t" << "raíz\n";
 
   int status; // se encarga de la gestion de errores
   int iter = 0; // se encarga de contar el numero de iteraciones
   int max_iter = 100;  // se encarga de limitar el numero de iteraciones
-  double r; // se encarga de almacenar la raiz encontrada
+  double r = x_inicial; // se encarga de almacenar la raiz encontrada
+  double r_anterior;
 
   do {
     iter++;
-    status = gsl_root_fsolver_iterate(s);  // se encarga de iterar
-    r = gsl_root_fsolver_root(s); // se encarga de almacenar la raiz encontrada
-    x_lo = gsl_root_fsolver_x_lower(s);  // se encarga de almacenar el limite inferior del intervalo
-    x_hi = gsl_root_fsolver_x_upper(s);  // se encarga de almacenar el limite superior del intervalo
-    std::cout << iter << "\t" << x_lo << "\t" << x_hi << "\t" << r << "\n";   // se encarga de mostrar el resultado de cada iteracion
-          status = gsl_root_test_interval( x_lo, x_hi, 0.0, 1e-8); // se encarga de comprobar si la raiz encontrada es suficientemente precisa
-  } while(status == GSL_CONTINUE && iter < max_iter);  // se encarga de continuar iterando mientras no se haya encontrado la raiz o se haya alcanzado el numero maximo de iteraciones
+    r_anterior = r;
 
-  std::cout << "\nRaiz encontrada = " << r << std::endl; gsl_root_fsolver_free(s);  // se encarga de liberar la memoria utilizada por el solver
+    status = gsl_root_fdfsolver_iterate(s);  // se encarga de iterar
+    r = gsl_root_fdfsolver_root(s); // se encarga de almacenar la raiz encontrada
+    
+    // TRUCO: Como Newton no tiene intervalos fsolver_x_lower, usamos tus variables
+    // para mostrar el paso anterior (x_lo) y el paso actual (x_hi)
+    x_lo = r_anterior;
+    x_hi = r;
+
+    // Se muestra el resultado respetando tus columnas originales
+    std::cout << iter << "\t" << x_lo << "\t" << x_hi << "\t" << r << "\n";   
+    
+    // NOTA: En métodos abiertos se usa test_delta para ver si la raíz ya no se mueve
+    status = gsl_root_test_delta(r, r_anterior, 0.0, 1e-8); 
+
+  } while(status == GSL_CONTINUE && iter < max_iter);  // se encarga de continuar iterando
+
+  std::cout << "\nRaiz encontrada = " << r << std::endl; 
+  gsl_root_fdfsolver_free(s);  // se encarga de liberar la memoria utilizada por el solver
   return 0;
 }
-
