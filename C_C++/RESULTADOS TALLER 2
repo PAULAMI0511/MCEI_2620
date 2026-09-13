@@ -186,6 +186,39 @@ paula@COMPUPAU:~/MCEI_2620/Octave$
 
 Resolver el sistema con la matriz original y con una perturbaci´on peque˜na.
 
+modificaremos ligeramente los datos de entrada con un vector b para simular un error de medición o un error de redondeo de la computadora 
 
+paula@COMPUPAU:~/MCEI_2620/Octave$ octave --no-gui leer.m
+Failed to create wl_display (No such file or directory)
+qt.qpa.plugin: Could not load the Qt platform plugin "wayland" in "" even though it was found.
+    Original        Perturbada       Diferencia
+   1.2854e-01   1.2854e-01   7.6379e-07
+   4.2160e-01   4.2160e-01  -2.7629e-06
+   1.1894e-01   1.1894e-01  -3.6955e-08
+   2.8685e-01   2.8686e-01  -3.4864e-06
+  -2.3187e-01  -2.3188e-01   2.3370e-06
+  -1.2869e-01  -1.2869e-01   6.2205e-07
+   1.2965e-02   1.2962e-02   2.5595e-06
+   3.5688e-01   3.5689e-01  -2.3955e-06
+  -1.2580e-01  -1.2580e-01   1.0889e-06
+  -1.3370e-01  -1.3370e-01   2.5138e-08
+Desviacion total (norma de la diferencia):
+6.3006e-06
+
+paula@COMPUPAU:~/MCEI_2620/C_C++/matrices$ ./build/main
+Indice  Original                Perturbada              Diferencia
+------------------------------------------------------------------
+0       0.128545                0.128544                7.6379e-07
+1       0.421598                0.4216          -2.76292e-06
+2       0.118936                0.118936                -3.69549e-08
+3       0.286855                0.286858                -3.48636e-06
+4       -0.231874               -0.231876               2.33702e-06
+5       -0.12869                -0.128691               6.22046e-07
+6       0.0129649               0.0129623               2.55947e-06
+7       0.356885                0.356887                -2.39555e-06
+8       -0.125803               -0.125804               1.08886e-06
+9       -0.133695               -0.133695               2.51382e-08
+
+Norma de la desviacion total: 6.3006e-06
 
 Analizar c´omo afecta el error a la soluci´on y discutir la estabilidad de los m´etodos

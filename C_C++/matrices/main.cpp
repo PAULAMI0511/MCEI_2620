@@ -109,9 +109,34 @@ int main()
   A(9, 7) = 2;
   A(9, 8) = 1;
   A(9, 9) = 5;
-  JacobiSVD<MatrixXd> svd(A);
-  double cond = svd.singularValues()[0] / svd.singularValues()[svd.singularValues().size() - 1];
 
-  std::cout << "El numero de condicion es: " << cond << std::endl;
+  // 1. Vector b original (puros unos, o el que prefieras)
+  VectorXd b = VectorXd::Constant(10, 1.0);
+
+  // Resolver sistema original
+  VectorXd x_original = A.householderQr().solve(b);
+
+  // 2. Crear una perturbación pequeña en b (añadir 1e-5 solo a la primera componente)
+  VectorXd b_pert = b;
+  b_pert(0) += 1e-5;
+
+  // 3. Resolver el sistema con el vector perturbado
+  VectorXd x_pert = A.householderQr().solve(b_pert);
+
+  // 4. Calcular la diferencia elemento a elemento
+  VectorXd diff = x_original - x_pert;
+
+  // Imprimir tabla detallada por componente
+  std::cout << "Indice\tOriginal\t\tPerturbada\t\tDiferencia" << std::endl;
+  std::cout << "------------------------------------------------------------------" << std::endl;
+  for (int i = 0; i < 10; ++i)
+  {
+    std::cout << i << "\t" << x_original(i) << "\t\t" << x_pert(i) << "\t\t" << diff(i) << std::endl;
+  }
+
+  // Desviación total (norma)
+  double desviacion = diff.norm();
+  std::cout << "\nNorma de la desviacion total: " << desviacion << std::endl;
+
   return 0;
 }
