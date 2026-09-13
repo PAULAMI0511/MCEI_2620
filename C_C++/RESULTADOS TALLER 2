@@ -1,3 +1,7 @@
+LUNA 
+PAULA 
+
+
 1 PUNTO 
 C_C++
 === MATRIZ ORIGINAL m ===
@@ -435,3 +439,8 @@ Metodo        Tiempo (us)    Residual ||A*A_inv - I||    Estabilidad
 3. SVD        2614.97           7.52e-15                 Maxima
 ==========================================================================
 paula@COMPUPAU:~/MCEI_2620/Octave$ 
+
+ Utiliza matrices ortogonales, junto con la matriz diagonal de valores singulares, permite aislar y controlar directamente el espectro de la matriz.
+SVD permite manejar o truncar dichos valores de forma segura mediante la pseudoinversa, evitando la explosión de errores numéricos por división cercana a cero.
+
+
