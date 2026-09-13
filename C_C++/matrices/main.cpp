@@ -1,9 +1,6 @@
 #include <iostream>
 #include <chrono>
-#include <cmath>
 #include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/LU>
-#include <eigen3/Eigen/QR>
 
 using namespace Eigen;
 using namespace std::chrono;
@@ -112,47 +109,20 @@ int main()
   A(9, 8) = 1;
   A(9, 9) = 5;
 
-  // Definimos una solución exacta conocida (puros unos) para calcular el error real
-  VectorXd x_exact = VectorXd::Ones(10);
-  VectorXd b = A * x_exact;
+  MatrixXd I = MatrixXd::Identity(10, 10);
 
-  // --- 1. Eliminación de Gauss (con pivoteo parcial) ---
   auto t1 = high_resolution_clock::now();
-  PartialPivLU<MatrixXd> gauss(A);
-  VectorXd x_gauss = gauss.solve(b);
+  MatrixXd A_inv_direct = A.inverse();
   auto t2 = high_resolution_clock::now();
-  double time_gauss = duration_cast<microseconds>(t2 - t1).count();
+  double time_direct = duration_cast<microseconds>(t2 - t1).count();
 
-  // --- 2. Factorización LU ---
-  auto t3 = high_resolution_clock::now();
-  FullPivLU<MatrixXd> lu(A);
-  VectorXd x_lu = lu.solve(b);
-  auto t4 = high_resolution_clock::now();
-  double time_lu = duration_cast<microseconds>(t4 - t3).count();
+  double res_direct = (A * A_inv_direct - I).norm();
 
-  // --- 3. Factorización QR ---
-  auto t5 = high_resolution_clock::now();
-  ColPivHouseholderQR<MatrixXd> qr(A);
-  VectorXd x_qr = qr.solve(b);
-  auto t6 = high_resolution_clock::now();
-  double time_qr = duration_cast<microseconds>(t6 - t5).count();
-
-  // --- Cálculo de Errores y Residuales ---
-  double err_gauss = (x_gauss - x_exact).norm();
-  double res_gauss = (A * x_gauss - b).norm();
-
-  double err_lu = (x_lu - x_exact).norm();
-  double res_lu = (A * x_lu - b).norm();
-
-  double err_qr = (x_qr - x_exact).norm();
-  double res_qr = (A * x_qr - b).norm();
-
-  // --- Impresión de la Tabla Comparativa ---
-  std::cout << "Metodo\t\t\tTiempo (us)\tError a la Solucion\tResidual ||Ax-b||" << std::endl;
-  std::cout << "--------------------------------------------------------------------------" << std::endl;
-  std::cout << "1. Gauss (Piv. Parcial)\t" << time_gauss << "\t\t" << err_gauss << "\t\t" << res_gauss << std::endl;
-  std::cout << "2. Factorizacion LU\t" << time_lu << "\t\t" << err_lu << "\t\t" << res_lu << std::endl;
-  std::cout << "3. Factorizacion QR\t" << time_qr << "\t\t" << err_qr << "\t\t" << res_qr << std::endl;
+  std::cout << "--- Metodo Directo (C++) ---" << std::endl;
+  std::cout << "Tiempo (us): " << time_direct << std::endl;
+  std::cout << "Residual ||A * A_inv - I||: " << res_direct << std::endl;
+  std::cout << "\nMatriz Inversa:\n"
+            << A_inv_direct << std::endl;
 
   return 0;
 }

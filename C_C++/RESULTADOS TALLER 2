@@ -168,7 +168,7 @@ Factorizacion LU| 97.101 us              | 4.44089e-16
 Factorizacion QR| 128.318 us             | 8.9509e-16
 ==========================================================
 
-Condicionamiento num´erico y estabilidad:
+3 Condicionamiento num´erico y estabilidad:
 Calcular el n´umero de condici´on de una matriz mal condicionada.
 para encontrar la condicion se mide lasensibilidad y estabilidad de un sistema ante cambios  pequeños por lo cual atravcez de sus valores singulares yla formula encontraremos la repsuesta 
 
@@ -242,3 +242,60 @@ es muy diferente los tiempos en octave y en C++, en c++ la eliminacion es mas op
 
 Tanto  en C++ como Octave se delega el cálculo pesado al mismo nivel de código compilado. por lo cual lu se dmeora casi lo mismo en los dos 
 
+
+ 4 Descomposicion QR y SVD para inversa de matrices: Calcular la inversa de una matriz usando:
+ Método directo (inversa estandar):
+
+
+
+
+paula@COMPUPAU:~/MCEI_2620/Octave$ octave --no-gui leer.m
+Failed to create wl_display (No such file or directory)
+qt.qpa.plugin: Could not load the Qt platform plugin "wayland" in "" even though it was found.
+--- Metodo Directo (Octave) ---
+Tiempo (us): 187.16
+Residual ||A * A_inv - I||: 4.06e-15
+Matriz Inversa:
+ Columns 1 through 6:
+
+  -7.6379e-02   2.7629e-01   3.6955e-03   3.4864e-01  -2.3370e-01  -6.2205e-02
+   2.7629e-01   6.1643e-01   3.0919e-01   3.3584e-01  -5.5306e-01  -2.0445e-01
+   3.6955e-03   3.0919e-01   2.0240e-01   1.5988e-01  -6.2472e-02  -1.6717e-01
+   3.4864e-01   3.3584e-01   1.5988e-01   3.1789e-01  -2.6924e-01  -1.8443e-01
+  -2.3370e-01  -5.5306e-01  -6.2472e-02  -2.6924e-01   4.9371e-01   3.1401e-01
+  -6.2205e-02  -2.0445e-01  -1.6717e-01  -1.8443e-01   3.1401e-01   2.3928e-01
+  -2.5595e-01  -8.0927e-02  -1.8283e-01  -7.4802e-02   4.6241e-02  -7.1836e-02
+   2.3955e-01   5.4273e-01   2.9319e-03   2.7584e-01  -4.6143e-01  -3.6609e-01
+  -1.0889e-01  -4.4345e-01  -2.5601e-02  -2.2516e-01   1.7556e-01   2.4993e-01
+  -2.5138e-03  -3.7699e-01  -1.2109e-01  -3.9760e-01   3.1851e-01   1.2428e-01
+
+ Columns 7 through 10:
+
+  -2.5595e-01   2.3955e-01  -1.0889e-01  -2.5138e-03
+  -8.0927e-02   5.4273e-01  -4.4345e-01  -3.7699e-01
+  -1.8283e-01   2.9319e-03  -2.5601e-02  -1.2109e-01
+  -7.4802e-02   2.7584e-01  -2.2516e-01  -3.9760e-01
+   4.6241e-02  -4.6143e-01   1.7556e-01   3.1851e-01
+  -7.1836e-02  -3.6609e-01   2.4993e-01   1.2428e-01
+   3.6249e-01   8.9550e-02   3.5545e-02   1.4548e-01
+   8.9550e-02   8.0770e-01  -3.0660e-01  -4.6730e-01
+   3.5545e-02  -3.0660e-01   2.4753e-01   2.7533e-01
+   1.4548e-01  -4.6730e-01   2.7533e-01   3.6819e-01
+
+
+paula@COMPUPAU:~/MCEI_2620/C_C++/matrices$ ./build/main
+--- Metodo Directo (C++) ---
+Tiempo (us): 88
+Residual ||A * A_inv - I||: 2.72826e-15
+
+Matriz Inversa:
+  -0.076379    0.276292  0.00369549    0.348636   -0.233702  -0.0622046   -0.255947    0.239555   -0.108886 -0.00251382
+   0.276292    0.616433    0.309189    0.335838   -0.553063    -0.20445  -0.0809273    0.542729   -0.443453    -0.37699
+ 0.00369549    0.309189    0.202405    0.159881  -0.0624721   -0.167172   -0.182829  0.00293186  -0.0256009   -0.121093
+   0.348636    0.335838    0.159881     0.31789   -0.269241   -0.184429  -0.0748016    0.275841   -0.225163   -0.397597
+  -0.233702   -0.553063  -0.0624721   -0.269241    0.493713    0.314011    0.046241   -0.461429    0.175555    0.318514
+ -0.0622046    -0.20445   -0.167172   -0.184429    0.314011    0.239276  -0.0718363   -0.366093    0.249933    0.124275
+  -0.255947  -0.0809273   -0.182829  -0.0748016    0.046241  -0.0718363    0.362487   0.0895501   0.0355447    0.145484
+   0.239555    0.542729  0.00293186    0.275841   -0.461429   -0.366093   0.0895501    0.807701   -0.306597   -0.467304
+  -0.108886   -0.443453  -0.0256009   -0.225163    0.175555    0.249933   0.0355447   -0.306597    0.247531    0.275333
+-0.00251382    -0.37699   -0.121093   -0.397597    0.318514    0.124275    0.145484   -0.467304    0.275333    0.368194
