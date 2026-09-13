@@ -410,3 +410,28 @@ Matriz Inversa:
 -0.00251382    -0.37699   -0.121093   -0.397597    0.318514    0.124275    0.145484   -0.467304    0.275333    0.368194
 
 
+paula@COMPUPAU:~/MCEI_2620/C_C++/matrices$ ./build/main
+==========================================================================
+          COMPARACION Y ESTABILIDAD NUMERICA (C++ / Eigen)                
+==========================================================================
+Metodo          Tiempo (us)     Residual ||A*A_inv - I||        Estabilidad
+--------------------------------------------------------------------------
+1. Directo      160             2.72826e-15     Moderada
+2. QR           174             3.8364e-15      Alta
+3. SVD          422             8.19078e-15     Maxima
+==========================================================================
+
+
+paula@COMPUPAU:~/MCEI_2620/Octave$ octave --no-gui leer.m
+Failed to create wl_display (No such file or directory)
+qt.qpa.plugin: Could not load the Qt platform plugin "wayland" in "" even though it was found.
+==========================================================================
+           COMPARACION Y ESTABILIDAD NUMERICA (Octave)                    
+==========================================================================
+Metodo        Tiempo (us)    Residual ||A*A_inv - I||    Estabilidad
+--------------------------------------------------------------------------
+1. Directo    838.99           4.06e-15                 Moderada
+2. QR         4070.04           3.97e-15                 Alta
+3. SVD        2614.97           7.52e-15                 Maxima
+==========================================================================
+paula@COMPUPAU:~/MCEI_2620/Octave$ 

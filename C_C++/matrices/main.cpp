@@ -1,6 +1,8 @@
 #include <iostream>
 #include <chrono>
+#include <cmath>
 #include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/QR>
 #include <eigen3/Eigen/SVD>
 
 using namespace Eigen;
@@ -113,17 +115,32 @@ int main()
   MatrixXd I = MatrixXd::Identity(10, 10);
 
   auto t1 = high_resolution_clock::now();
-  MatrixXd A_inv_svd = A.jacobiSvd(ComputeThinU | ComputeThinV).solve(I);
+  MatrixXd A_inv_dir = A.inverse();
   auto t2 = high_resolution_clock::now();
-  double time_svd = duration_cast<microseconds>(t2 - t1).count();
+  double time_dir = duration_cast<microseconds>(t2 - t1).count();
+  double res_dir = (A * A_inv_dir - I).norm();
 
+  auto t3 = high_resolution_clock::now();
+  MatrixXd A_inv_qr = A.householderQr().solve(I);
+  auto t4 = high_resolution_clock::now();
+  double time_qr = duration_cast<microseconds>(t4 - t3).count();
+  double res_qr = (A * A_inv_qr - I).norm();
+
+  auto t5 = high_resolution_clock::now();
+  MatrixXd A_inv_svd = A.jacobiSvd(ComputeThinU | ComputeThinV).solve(I);
+  auto t6 = high_resolution_clock::now();
+  double time_svd = duration_cast<microseconds>(t6 - t5).count();
   double res_svd = (A * A_inv_svd - I).norm();
 
-  std::cout << "--- Metodo SVD (C++) ---" << std::endl;
-  std::cout << "Tiempo (us): " << time_svd << std::endl;
-  std::cout << "Residual ||A * A_inv - I||: " << res_svd << std::endl;
-  std::cout << "\nMatriz Inversa:\n"
-            << A_inv_svd << std::endl;
+  std::cout << "==========================================================================" << std::endl;
+  std::cout << "          COMPARACION Y ESTABILIDAD NUMERICA (C++ / Eigen)                " << std::endl;
+  std::cout << "==========================================================================" << std::endl;
+  std::cout << "Metodo\t\tTiempo (us)\tResidual ||A*A_inv - I||\tEstabilidad" << std::endl;
+  std::cout << "--------------------------------------------------------------------------" << std::endl;
+  std::cout << "1. Directo\t" << time_dir << "\t\t" << res_dir << "\tModerada" << std::endl;
+  std::cout << "2. QR\t\t" << time_qr << "\t\t" << res_qr << "\tAlta" << std::endl;
+  std::cout << "3. SVD\t\t" << time_svd << "\t\t" << res_svd << "\tMaxima" << std::endl;
+  std::cout << "==========================================================================" << std::endl;
 
   return 0;
 }
