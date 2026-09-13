@@ -1,8 +1,6 @@
 #include <iostream>
 #include <eigen3/Eigen/Dense>
-
 using Eigen::MatrixXd;
-
 int main()
 {
   MatrixXd m(4, 3);
@@ -58,13 +56,13 @@ int main()
 
   // Propiedad 4: (m+ * m)^T = m+ * m
   // El producto m+ * m es una matriz simetrica. Representa la proyeccion ortogonal sobre el espacio fila de m.
+  // Propiedad 4: (m+ * m)^T = m+ * m
   MatrixXd p4_trans = (m_inv * m).transpose();
   MatrixXd p4_orig = m_inv * m;
   std::cout << "\n4. Propiedad (m+ * m)^T = m+ * m:" << std::endl;
-  std::cout << "Transpuesta (m+ * m)^T:" << std::endl
-            << p4_trans << std::endl;
+  std::cout << "Transpuesta (m+ * m)^T:" << std::endl;
+  std::cout << p4_trans << std::endl;
   std::cout << "Diferencia (norma error): " << (p4_trans - p4_orig).norm() << std::endl;
-
   return 0;
 }
 
