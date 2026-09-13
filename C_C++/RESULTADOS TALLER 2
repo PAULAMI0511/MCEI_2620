@@ -130,4 +130,41 @@ qt.qpa.plugin: Could not load the Qt platform plugin "wayland" in "" even though
   -0.125803
   -0.133695
 
-  
+La factorización QR es una técnica de descomposición matricial que expresa cualquier matriz real $A$ (de dimensiones $m \times n$) como el producto de dos matrices:$$A = QR$$
+
+=== SOLUCION POR FACTORIZACION QR (C++) ===
+ 0.128545
+ 0.421598
+ 0.118936
+ 0.286855
+-0.231874
+ -0.12869
+0.0129649
+ 0.356885
+-0.125803
+-0.133695
+
+=== SOLUCION POR FACTORIZACION QR (OCTAVE) ===
+   0.128545
+   0.421598
+   0.118936
+   0.286855
+  -0.231874
+  -0.128690
+   0.012965
+   0.356885
+  -0.125803
+  -0.133695
+
+  COMPARACION DE EFICIENCIA MEDIANTE LA LIBRERIA DE EIGEN3 
+
+  ==========================================================
+           COMPARATIVA DE RENDIMIENTO Y PRECISION         
+==========================================================
+Metodo          | Tiempo (microsegundos) | Residuo ||Ax - b||
+----------------------------------------------------------
+Gauss-Jordan    | 61.336 us              | 1.16441e-15
+Factorizacion LU| 97.101 us              | 4.44089e-16
+Factorizacion QR| 128.318 us             | 8.9509e-16
+==========================================================
+

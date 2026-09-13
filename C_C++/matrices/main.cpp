@@ -1,14 +1,14 @@
 #include <iostream>
+#include <chrono>
+#include <cmath>
 #include <eigen3/Eigen/Dense>
 
-using Eigen::MatrixXd;
-using Eigen::VectorXd;
+using namespace Eigen;
+using namespace std::chrono;
 
 int main()
 {
   MatrixXd A(10, 10);
-
-  // Asignación de valores de la matriz A
   A(0, 0) = 2;
   A(0, 1) = 1;
   A(0, 2) = 0;
@@ -112,16 +112,62 @@ int main()
 
   VectorXd b(10);
   b << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
+  int n = A.rows();
 
-  // Resolución mediante Factorización QR
-  VectorXd x = A.householderQr().solve(b);
+  // 1. MÉTODO GAUSS-JORDAN
+  auto start = high_resolution_clock::now();
+  MatrixXd aug(n, n + 1);
+  aug.leftCols(n) = A;
+  aug.rightCols(1) = b;
+  for (int i = 0; i < n; ++i)
+  {
+    int maxRow = i;
+    for (int k = i + 1; k < n; ++k)
+    {
+      if (std::abs(aug(k, i)) > std::abs(aug(maxRow, i)))
+        maxRow = k;
+    }
+    aug.row(i).swap(aug.row(maxRow));
+    double pivot = aug(i, i);
+    if (std::abs(pivot) > 1e-12)
+    {
+      aug.row(i) /= pivot;
+      for (int k = 0; k < n; ++k)
+      {
+        if (k != i)
+          aug.row(k) -= aug(k, i) * aug.row(i);
+      }
+    }
+  }
+  VectorXd x_gj = aug.rightCols(1);
+  auto end = high_resolution_clock::now();
+  double time_gj = duration<double, std::micro>(end - start).count();
+  double error_gj = (A * x_gj - b).norm();
 
-  std::cout << "=== SOLUCION POR FACTORIZACION QR (C++) ===" << std::endl;
-  std::cout << x << std::endl;
+  // 2. FACTORIZACIÓN LU
+  start = high_resolution_clock::now();
+  VectorXd x_lu = A.partialPivLu().solve(b);
+  end = high_resolution_clock::now();
+  double time_lu = duration<double, std::micro>(end - start).count();
+  double error_lu = (A * x_lu - b).norm();
+
+  // 3. FACTORIZACIÓN QR
+  start = high_resolution_clock::now();
+  VectorXd x_qr = A.householderQr().solve(b);
+  end = high_resolution_clock::now();
+  double time_qr = duration<double, std::micro>(end - start).count();
+  double error_qr = (A * x_qr - b).norm();
+
+  // RESULTADOS EN PANTALLA
+  std::cout << "==========================================================" << std::endl;
+  std::cout << "           COMPARATIVA DE RENDIMIENTO Y PRECISION         " << std::endl;
+  std::cout << "==========================================================" << std::endl;
+  std::cout << "Metodo          | Tiempo (microsegundos) | Residuo ||Ax - b||" << std::endl;
+  std::cout << "----------------------------------------------------------" << std::endl;
+  std::cout << "Gauss-Jordan    | " << time_gj << " us\t\t | " << error_gj << std::endl;
+  std::cout << "Factorizacion LU| " << time_lu << " us\t\t | " << error_lu << std::endl;
+  std::cout << "Factorizacion QR| " << time_qr << " us\t\t | " << error_qr << std::endl;
+  std::cout << "==========================================================" << std::endl;
 
   return 0;
 }
-
-// TRABAJO DE PAULA Y LUNA
-// sistemas de ecuaciones lineales
-// TRABAJO DE PAULA Y LUNA
