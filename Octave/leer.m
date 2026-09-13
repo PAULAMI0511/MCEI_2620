@@ -12,13 +12,11 @@ A = [
   4, 2, 1, 1, 3, 0, 1, 2, 1, 5
 ];
 
-b = [1; 1; 1; 1; 1; 1; 1; 1; 1; 1];
+% Usando la función directa de Octave
+c = cond(A);
+disp(['Numero de condicion: ', num2str(c)]);
 
-% Descomposición QR (A = Q * R)
-[Q, R] = qr(A);
-
-% Resolución del sistema lineal usando QR (R * x = Q' * b)
-x = R \ (Q' * b);
-
-disp("=== SOLUCION POR FACTORIZACION QR (OCTAVE) ===");
-disp(x);
+% O mediante valores singulares
+s = svd(A);
+cond_svd = max(s) / min(s);
+disp(['Numero de condicion (SVD): ', num2str(cond_svd)]);

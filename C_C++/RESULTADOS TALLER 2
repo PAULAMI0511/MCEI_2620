@@ -168,3 +168,24 @@ Factorizacion LU| 97.101 us              | 4.44089e-16
 Factorizacion QR| 128.318 us             | 8.9509e-16
 ==========================================================
 
+Condicionamiento num´erico y estabilidad:
+Calcular el n´umero de condici´on de una matriz mal condicionada.
+para encontrar la condicion se mide lasensibilidad y estabilidad de un sistema ante cambios  pequeños por lo cual atravcez de sus valores singulares yla formula encontraremos la repsuesta 
+
+Si el número de condición es cercano a $1$, la matriz está bien condicionada (es estable)
+paula@COMPUPAU:~/MCEI_2620/C_C++/matrices$ ./build/main
+El numero de condicion es: 51.715
+paula@COMPUPAU:~/MCEI_2620/C_C++/matrices$ 
+
+paula@COMPUPAU:~/MCEI_2620/Octave$ octave --no-gui leer.m
+Failed to create wl_display (No such file or directory)
+qt.qpa.plugin: Could not load the Qt platform plugin "wayland" in "" even though it was found.
+Numero de condicion: 51.715
+Numero de condicion (SVD): 51.715
+paula@COMPUPAU:~/MCEI_2620/Octave$ 
+
+Resolver el sistema con la matriz original y con una perturbaci´on peque˜na.
+
+
+
+Analizar c´omo afecta el error a la soluci´on y discutir la estabilidad de los m´etodos
