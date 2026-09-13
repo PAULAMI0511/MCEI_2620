@@ -1,44 +1,60 @@
-% Matriz m del Punto 1 (4x3)
-m = [1,  0,  2;
-     2, -1,  5;
-     0,  1, -1;
-     1,  3, -1];
+% Matriz A del sistema (10x10)
+A = [
+  2, 1, 0, 3, 2, 1, 0, 2, 1, 4;
+  1, 3, 2, 0, 1, 4, 2, 1, 0, 2;
+  0, 2, 4, 1, 3, 0, 1, 2, 4, 1;
+  3, 0, 1, 5, 2, 1, 3, 0, 2, 1;
+  2, 1, 3, 2, 6, 2, 1, 4, 0, 3;
+  1, 4, 0, 1, 2, 5, 2, 1, 3, 0;
+  0, 2, 1, 3, 1, 2, 4, 0, 2, 1;
+  2, 1, 2, 0, 4, 1, 0, 5, 3, 2;
+  1, 0, 4, 2, 0, 3, 2, 3, 6, 1;
+  4, 2, 1, 1, 3, 0, 1, 2, 1, 5
+];
 
-disp("=== MATRIZ ORIGINAL m ===");
-disp(m);
+% Vector de términos independientes b
+b = [1; 1; 1; 1; 1; 1; 1; 1; 1; 1];
 
-% Cálculo de la pseudoinversa de Moore-Penrose (m+)
-m_inv = pinv(m);
+n = size(A, 1);
 
-disp("=== PSEUDOINVERSA DE m (m+) ===");
-disp(m_inv);
+% Construcción de la matriz aumentada [A | b]
+aug = [A, b];
 
-disp("=== VERIFICACION DE LAS 4 PROPIEDADES DE PENROSE ===");
+% Algoritmo de Gauss-Jordan con pivoteo parcial
+for i = 1:n
+    % Buscar el pivote máximo en la columna i
+    [~, max_row] = max(abs(aug(i:n, i)));
+    max_row = max_row + i - 1;
+    
+    % Intercambiar filas si es necesario
+    if max_row ~= i
+        aug([i, max_row], :) = aug([max_row, i], :);
+    endif
+    
+    pivot = aug(i, i);
+    if abs(pivot) < 1e-12
+        error("La matriz es singular o casi singular.");
+    endif
+    
+    % Normalizar la fila del pivote
+    aug(i, :) = aug(i, :) / pivot;
+    
+    % Hacer ceros en las demás filas (arriba y abajo)
+    for k = 1:n
+        if k ~= i
+            factor = aug(k, i);
+            aug(k, :) = aug(k, :) - factor * aug(i, :);
+        endif
+    endfor
+end
 
-% Propiedad 1: m * m+ * m = m
-% La matriz m+ actúa como una inversa débil a derecha e izquierda respecto a m.
-p1 = m * m_inv * m;
-disp("1. Propiedad m * m+ * m = m (Norma de error):");
-disp(norm(p1 - m));
+% Extraer la solución de la última columna
+x = aug(:, end);
 
-% Propiedad 2: m+ * m * m+ = m+
-% La matriz m actúa como una inversa respecto a su pseudoinversa m+.
-p2 = m_inv * m * m_inv;
-disp("2. Propiedad m+ * m * m+ = m+ (Norma de error):");
-disp(norm(p2 - m_inv));
+disp("=== MATRIZ A (10x10) ===");
+disp(A);
 
-% Propiedad 3: (m * m+)^T = m * m+
-% El producto m * m+ es una matriz simétrica. Representa la proyección ortogonal sobre el espacio columna de m.
-p3_trans = (m * m_inv)';
-p3_orig = m * m_inv;
-disp("3. Propiedad (m * m+)^T = m * m+ (Norma de error):");
-disp(norm(p3_trans - p3_orig));
+disp("=== SOLUCION POR GAUSS-JORDAN (x) ===");
+disp(x);
 
-% Propiedad 4: (m+ * m)^T = m+ * m
-% El producto m+ * m es una matriz simétrica. Representa la proyección ortogonal sobre el espacio fila de m.
-p4_trans = (m_inv * m)';
-p4_orig = m_inv * m;
-disp("4. Propiedad (m+ * m)^T = m+ * m (Norma de error):");
-disp(norm(p4_trans - p4_orig));
-
-% TRABAJO DE LUNA Y PAULA
+% TRABAJO DE PAULA Y LUNA
