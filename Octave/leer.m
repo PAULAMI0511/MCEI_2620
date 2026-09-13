@@ -13,3 +13,4 @@ m_inv = pinv(m);
 disp("=== PSEUDOINVERSA DE m ===");
 disp(m_inv);
 
+%TRABAJO LUNA Y PAULA 
