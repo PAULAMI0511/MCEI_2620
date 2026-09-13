@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cmath>
 #include <eigen3/Eigen/Dense>
 
 using Eigen::MatrixXd;
@@ -7,10 +6,9 @@ using Eigen::VectorXd;
 
 int main()
 {
-  // Declaración de la matriz A de 10x10
   MatrixXd A(10, 10);
 
-  // Asignación de valores posición por posición (Fila, Columna)
+  // Asignación de valores de la matriz A
   A(0, 0) = 2;
   A(0, 1) = 1;
   A(0, 2) = 0;
@@ -21,7 +19,6 @@ int main()
   A(0, 7) = 2;
   A(0, 8) = 1;
   A(0, 9) = 4;
-
   A(1, 0) = 1;
   A(1, 1) = 3;
   A(1, 2) = 2;
@@ -32,7 +29,6 @@ int main()
   A(1, 7) = 1;
   A(1, 8) = 0;
   A(1, 9) = 2;
-
   A(2, 0) = 0;
   A(2, 1) = 2;
   A(2, 2) = 4;
@@ -43,7 +39,6 @@ int main()
   A(2, 7) = 2;
   A(2, 8) = 4;
   A(2, 9) = 1;
-
   A(3, 0) = 3;
   A(3, 1) = 0;
   A(3, 2) = 1;
@@ -54,7 +49,6 @@ int main()
   A(3, 7) = 0;
   A(3, 8) = 2;
   A(3, 9) = 1;
-
   A(4, 0) = 2;
   A(4, 1) = 1;
   A(4, 2) = 3;
@@ -65,7 +59,6 @@ int main()
   A(4, 7) = 4;
   A(4, 8) = 0;
   A(4, 9) = 3;
-
   A(5, 0) = 1;
   A(5, 1) = 4;
   A(5, 2) = 0;
@@ -76,7 +69,6 @@ int main()
   A(5, 7) = 1;
   A(5, 8) = 3;
   A(5, 9) = 0;
-
   A(6, 0) = 0;
   A(6, 1) = 2;
   A(6, 2) = 1;
@@ -87,7 +79,6 @@ int main()
   A(6, 7) = 0;
   A(6, 8) = 2;
   A(6, 9) = 1;
-
   A(7, 0) = 2;
   A(7, 1) = 1;
   A(7, 2) = 2;
@@ -98,7 +89,6 @@ int main()
   A(7, 7) = 5;
   A(7, 8) = 3;
   A(7, 9) = 2;
-
   A(8, 0) = 1;
   A(8, 1) = 0;
   A(8, 2) = 4;
@@ -109,7 +99,6 @@ int main()
   A(8, 7) = 3;
   A(8, 8) = 6;
   A(8, 9) = 1;
-
   A(9, 0) = 4;
   A(9, 1) = 2;
   A(9, 2) = 1;
@@ -121,61 +110,13 @@ int main()
   A(9, 8) = 1;
   A(9, 9) = 5;
 
-  // Vector de términos independientes b (puedes ajustarlo según tu taller)
   VectorXd b(10);
   b << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
 
-  int n = A.rows();
+  // Resolución mediante Factorización LU con pivoteo parcial de Eigen
+  VectorXd x = A.partialPivLu().solve(b);
 
-  // Construcción de la matriz aumentada [A | b] para aplicar Gauss-Jordan
-  MatrixXd aug(n, n + 1);
-  aug.leftCols(n) = A;
-  aug.rightCols(1) = b;
-
-  // Algoritmo de Eliminación de Gauss-Jordan con pivoteo parcial
-  for (int i = 0; i < n; ++i)
-  {
-    int maxRow = i;
-    for (int k = i + 1; k < n; ++k)
-    {
-      if (std::abs(aug(k, i)) > std::abs(aug(maxRow, i)))
-      {
-        maxRow = k;
-      }
-    }
-
-    // Intercambiar filas
-    aug.row(i).swap(aug.row(maxRow));
-
-    double pivot = aug(i, i);
-    if (std::abs(pivot) < 1e-12)
-    {
-      std::cerr << "Advertencia: La matriz puede ser singular." << std::endl;
-      continue;
-    }
-
-    // Normalizar la fila del pivote
-    aug.row(i) /= pivot;
-
-    // Hacer ceros en las demás filas (arriba y abajo del pivote)
-    for (int k = 0; k < n; ++k)
-    {
-      if (k != i)
-      {
-        double factor = aug(k, i);
-        aug.row(k) -= factor * aug.row(i);
-      }
-    }
-  }
-
-  // Extraer la solución del vector resultante en la última columna
-  VectorXd x = aug.rightCols(1);
-
-  std::cout << "=== MATRIZ A (10x10) ===" << std::endl;
-  std::cout << A << std::endl
-            << std::endl;
-
-  std::cout << "=== SOLUCION POR GAUSS-JORDAN (x) ===" << std::endl;
+  std::cout << "=== SOLUCION POR FACTORIZACION LU (C++) ===" << std::endl;
   std::cout << x << std::endl;
 
   return 0;
