@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/QR>
 
 using namespace Eigen;
 using namespace std::chrono;
@@ -112,17 +113,17 @@ int main()
   MatrixXd I = MatrixXd::Identity(10, 10);
 
   auto t1 = high_resolution_clock::now();
-  MatrixXd A_inv_direct = A.inverse();
+  MatrixXd A_inv_qr = A.householderQr().solve(I);
   auto t2 = high_resolution_clock::now();
-  double time_direct = duration_cast<microseconds>(t2 - t1).count();
+  double time_qr = duration_cast<microseconds>(t2 - t1).count();
 
-  double res_direct = (A * A_inv_direct - I).norm();
+  double res_qr = (A * A_inv_qr - I).norm();
 
-  std::cout << "--- Metodo Directo (C++) ---" << std::endl;
-  std::cout << "Tiempo (us): " << time_direct << std::endl;
-  std::cout << "Residual ||A * A_inv - I||: " << res_direct << std::endl;
+  std::cout << "--- Metodo QR (C++) ---" << std::endl;
+  std::cout << "Tiempo (us): " << time_qr << std::endl;
+  std::cout << "Residual ||A * A_inv - I||: " << res_qr << std::endl;
   std::cout << "\nMatriz Inversa:\n"
-            << A_inv_direct << std::endl;
+            << A_inv_qr << std::endl;
 
   return 0;
 }
