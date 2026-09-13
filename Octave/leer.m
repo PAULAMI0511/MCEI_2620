@@ -14,12 +14,11 @@ A = [
 
 b = [1; 1; 1; 1; 1; 1; 1; 1; 1; 1];
 
-% Descomposición LU con matriz de permutación P (P*A = L*U)
-[L, U, P] = lu(A);
+% Descomposición QR (A = Q * R)
+[Q, R] = qr(A);
 
-% Resolución de los sistemas triangulares: Ly = Pb y Ux = y
-y = L \ (P * b);
-x = U \ y;
+% Resolución del sistema lineal usando QR (R * x = Q' * b)
+x = R \ (Q' * b);
 
-disp("=== SOLUCION POR FACTORIZACION LU (OCTAVE) ===");
+disp("=== SOLUCION POR FACTORIZACION QR (OCTAVE) ===");
 disp(x);

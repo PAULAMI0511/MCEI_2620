@@ -113,10 +113,10 @@ int main()
   VectorXd b(10);
   b << 1, 1, 1, 1, 1, 1, 1, 1, 1, 1;
 
-  // Resolución mediante Factorización LU con pivoteo parcial de Eigen
-  VectorXd x = A.partialPivLu().solve(b);
+  // Resolución mediante Factorización QR
+  VectorXd x = A.householderQr().solve(b);
 
-  std::cout << "=== SOLUCION POR FACTORIZACION LU (C++) ===" << std::endl;
+  std::cout << "=== SOLUCION POR FACTORIZACION QR (C++) ===" << std::endl;
   std::cout << x << std::endl;
 
   return 0;
