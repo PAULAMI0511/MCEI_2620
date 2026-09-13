@@ -2,6 +2,8 @@
 #include <chrono>
 #include <cmath>
 #include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/LU>
+#include <eigen3/Eigen/QR>
 
 using namespace Eigen;
 using namespace std::chrono;
@@ -110,33 +112,47 @@ int main()
   A(9, 8) = 1;
   A(9, 9) = 5;
 
-  // 1. Vector b original (puros unos, o el que prefieras)
-  VectorXd b = VectorXd::Constant(10, 1.0);
+  // Definimos una solución exacta conocida (puros unos) para calcular el error real
+  VectorXd x_exact = VectorXd::Ones(10);
+  VectorXd b = A * x_exact;
 
-  // Resolver sistema original
-  VectorXd x_original = A.householderQr().solve(b);
+  // --- 1. Eliminación de Gauss (con pivoteo parcial) ---
+  auto t1 = high_resolution_clock::now();
+  PartialPivLU<MatrixXd> gauss(A);
+  VectorXd x_gauss = gauss.solve(b);
+  auto t2 = high_resolution_clock::now();
+  double time_gauss = duration_cast<microseconds>(t2 - t1).count();
 
-  // 2. Crear una perturbación pequeña en b (añadir 1e-5 solo a la primera componente)
-  VectorXd b_pert = b;
-  b_pert(0) += 1e-5;
+  // --- 2. Factorización LU ---
+  auto t3 = high_resolution_clock::now();
+  FullPivLU<MatrixXd> lu(A);
+  VectorXd x_lu = lu.solve(b);
+  auto t4 = high_resolution_clock::now();
+  double time_lu = duration_cast<microseconds>(t4 - t3).count();
 
-  // 3. Resolver el sistema con el vector perturbado
-  VectorXd x_pert = A.householderQr().solve(b_pert);
+  // --- 3. Factorización QR ---
+  auto t5 = high_resolution_clock::now();
+  ColPivHouseholderQR<MatrixXd> qr(A);
+  VectorXd x_qr = qr.solve(b);
+  auto t6 = high_resolution_clock::now();
+  double time_qr = duration_cast<microseconds>(t6 - t5).count();
 
-  // 4. Calcular la diferencia elemento a elemento
-  VectorXd diff = x_original - x_pert;
+  // --- Cálculo de Errores y Residuales ---
+  double err_gauss = (x_gauss - x_exact).norm();
+  double res_gauss = (A * x_gauss - b).norm();
 
-  // Imprimir tabla detallada por componente
-  std::cout << "Indice\tOriginal\t\tPerturbada\t\tDiferencia" << std::endl;
-  std::cout << "------------------------------------------------------------------" << std::endl;
-  for (int i = 0; i < 10; ++i)
-  {
-    std::cout << i << "\t" << x_original(i) << "\t\t" << x_pert(i) << "\t\t" << diff(i) << std::endl;
-  }
+  double err_lu = (x_lu - x_exact).norm();
+  double res_lu = (A * x_lu - b).norm();
 
-  // Desviación total (norma)
-  double desviacion = diff.norm();
-  std::cout << "\nNorma de la desviacion total: " << desviacion << std::endl;
+  double err_qr = (x_qr - x_exact).norm();
+  double res_qr = (A * x_qr - b).norm();
+
+  // --- Impresión de la Tabla Comparativa ---
+  std::cout << "Metodo\t\t\tTiempo (us)\tError a la Solucion\tResidual ||Ax-b||" << std::endl;
+  std::cout << "--------------------------------------------------------------------------" << std::endl;
+  std::cout << "1. Gauss (Piv. Parcial)\t" << time_gauss << "\t\t" << err_gauss << "\t\t" << res_gauss << std::endl;
+  std::cout << "2. Factorizacion LU\t" << time_lu << "\t\t" << err_lu << "\t\t" << res_lu << std::endl;
+  std::cout << "3. Factorizacion QR\t" << time_qr << "\t\t" << err_qr << "\t\t" << res_qr << std::endl;
 
   return 0;
 }

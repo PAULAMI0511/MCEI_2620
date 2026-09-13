@@ -222,3 +222,23 @@ Indice  Original                Perturbada              Diferencia
 Norma de la desviacion total: 6.3006e-06
 
 Analizar c´omo afecta el error a la soluci´on y discutir la estabilidad de los m´etodos
+
+paula@COMPUPAU:~/MCEI_2620/C_C++/matrices$ ./build/main
+Metodo                  Tiempo (us)     Error a la Solucion     Residual ||Ax-b||
+--------------------------------------------------------------------------
+1. Gauss (Piv. Parcial) 81              3.54229e-15             7.10543e-15
+2. Factorizacion LU     71              2.27799e-15             8.88178e-15
+3. Factorizacion QR     132             8.38641e-15             1.08052e-14
+
+parece que el mejor seria el metodo de U y ek de QR que pensamos tiene sentido ya que tiene mas operaciones debido a un nuevo vectorincrustado gauss es un metodo muy reptitivo que alg ser una matriz grande pues tienede a demorarse bastante aunque como podemos ver  no tanto como la QR 
+
+Metodo                   Tiempo (us)    Error a la Solucion    Residual ||Ax-b||
+----------------------------------------------------------------------------------
+1. Gauss                  245.81          1.19e-15          0.00e+00
+2. Factorizacion LU       82.02          1.19e-15          0.00e+00
+3. Factorizacion QR       72.00          3.06e-15          9.57e-15
+
+es muy diferente los tiempos en octave y en C++, en c++ la eliminacion es mas optimatizada que calcula de una manera triangular mas rapida para resolcer el sistema por lo cual apesar de ser un metodo amplip y de muchas operaciones en c++ es mas rapido debido a la librira especializada mientras octave es través de rutinas hiper-optimizadas
+
+Tanto  en C++ como Octave se delega el cálculo pesado al mismo nivel de código compilado. por lo cual lu se dmeora casi lo mismo en los dos 
+
