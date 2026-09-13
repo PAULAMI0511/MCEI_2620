@@ -14,14 +14,15 @@ A = [
 I = eye(10);
 
 tic;
-[Q, R] = qr(A);
-A_inv_qr = R \ (Q' * I);
-time_qr = toc * 1e6;
+[U, S, V] = svd(A);
+S_inv = diag(1 ./ diag(S));
+A_inv_svd = V * S_inv * U';
+time_svd = toc * 1e6;
 
-res_qr = norm(A * A_inv_qr - I, 'fro');
+res_svd = norm(A * A_inv_svd - I, 'fro');
 
-disp('--- Metodo QR (Octave) ---');
-fprintf('Tiempo (us): %.2f\n', time_qr);
-fprintf('Residual ||A * A_inv - I||: %.2e\n', res_qr);
+disp('--- Metodo SVD (Octave) ---');
+fprintf('Tiempo (us): %.2f\n', time_svd);
+fprintf('Residual ||A * A_inv - I||: %.2e\n', res_svd);
 disp('Matriz Inversa:');
-disp(A_inv_qr);
+disp(A_inv_svd);

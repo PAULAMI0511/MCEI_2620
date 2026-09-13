@@ -1,7 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <eigen3/Eigen/Dense>
-#include <eigen3/Eigen/QR>
+#include <eigen3/Eigen/SVD>
 
 using namespace Eigen;
 using namespace std::chrono;
@@ -113,17 +113,17 @@ int main()
   MatrixXd I = MatrixXd::Identity(10, 10);
 
   auto t1 = high_resolution_clock::now();
-  MatrixXd A_inv_qr = A.householderQr().solve(I);
+  MatrixXd A_inv_svd = A.jacobiSvd(ComputeThinU | ComputeThinV).solve(I);
   auto t2 = high_resolution_clock::now();
-  double time_qr = duration_cast<microseconds>(t2 - t1).count();
+  double time_svd = duration_cast<microseconds>(t2 - t1).count();
 
-  double res_qr = (A * A_inv_qr - I).norm();
+  double res_svd = (A * A_inv_svd - I).norm();
 
-  std::cout << "--- Metodo QR (C++) ---" << std::endl;
-  std::cout << "Tiempo (us): " << time_qr << std::endl;
-  std::cout << "Residual ||A * A_inv - I||: " << res_qr << std::endl;
+  std::cout << "--- Metodo SVD (C++) ---" << std::endl;
+  std::cout << "Tiempo (us): " << time_svd << std::endl;
+  std::cout << "Residual ||A * A_inv - I||: " << res_svd << std::endl;
   std::cout << "\nMatriz Inversa:\n"
-            << A_inv_qr << std::endl;
+            << A_inv_svd << std::endl;
 
   return 0;
 }
