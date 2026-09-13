@@ -103,3 +103,31 @@ sistemas de ecuaciones lineales
 
 Factorizacion LU 
 
+=== SOLUCION POR FACTORIZACION LU (C++) ===
+ 0.128545
+ 0.421598
+ 0.118936
+ 0.286855
+-0.231874
+ -0.12869
+0.0129649
+ 0.356885
+-0.125803
+-0.133695
+
+
+ailed to create wl_display (No such file or directory)
+qt.qpa.plugin: Could not load the Qt platform plugin "wayland" in "" even though it was found.
+=== SOLUCION POR FACTORIZACION LU (OCTAVE) ===
+   0.128545
+   0.421598
+   0.118936
+   0.286855
+  -0.231874
+  -0.128690
+   0.012965
+   0.356885
+  -0.125803
+  -0.133695
+
+  
