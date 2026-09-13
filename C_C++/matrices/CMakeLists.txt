@@ -1,8 +1,6 @@
-cmake_minimum_required( VERSION 3.20 )
+cmake_minimum_required(VERSION 3.10)
 project(matrices)
-find_package( Eigen3 )
-main
-add_executable( ${PROJECT_NAME} main.cpp
-=======
-add_executable( ${PROJECT_NAME} main.cpp )
- main
+
+set(CMAKE_CXX_STANDARD 17)
+
+add_executable(main main.cpp)
