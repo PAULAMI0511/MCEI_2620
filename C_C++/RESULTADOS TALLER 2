@@ -172,6 +172,8 @@ Factorizacion LU| 97.101 us              | 4.44089e-16
 Factorizacion QR| 128.318 us             | 8.9509e-16
 ==========================================================
 
+
+
 3 Condicionamiento num´erico y estabilidad:
 Calcular el n´umero de condici´on de una matriz mal condicionada.
 para encontrar la condicion se mide lasensibilidad y estabilidad de un sistema ante cambios  pequeños por lo cual atravcez de sus valores singulares yla formula encontraremos la repsuesta 
@@ -234,7 +236,7 @@ Metodo                  Tiempo (us)     Error a la Solucion     Residual ||Ax-b|
 2. Factorizacion LU     71              2.27799e-15             8.88178e-15
 3. Factorizacion QR     132             8.38641e-15             1.08052e-14
 
-parece que el mejor seria el metodo de U y ek de QR que pensamos tiene sentido ya que tiene mas operaciones debido a un nuevo vectorincrustado gauss es un metodo muy reptitivo que alg ser una matriz grande pues tienede a demorarse bastante aunque como podemos ver  no tanto como la QR 
+ue tiene mas operaciones debido a un nuevo vectorincrustado gauss es un metodo muy reptitivo que alg ser una matriz grande pues tienede a demorarse bastante aunque como podemos ver  no tanto como la QR parece que el mejor seria el metodo de U y ek de QR que pensamos tiene sentido ya q
 
 Metodo                   Tiempo (us)    Error a la Solucion    Residual ||Ax-b||
 ----------------------------------------------------------------------------------
