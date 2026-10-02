@@ -4,6 +4,7 @@
 #include <vector>
 #include <cmath>
 #include <iomanip>
+#include <chrono>
 
 // Función para corregir saltos de 2*pi en la orientación (unwrap manual)
 void unwrap(std::vector<double> &theta)
@@ -64,6 +65,11 @@ int main()
 
     std::vector<double> vx(N), vy(N), v(N), theta(N), omega(N);
 
+    // =========================================================================
+    // INICIO MEDICIÓN DE TIEMPO DE CÁLCULO NUMÉRICO
+    // =========================================================================
+    auto t_inicio = std::chrono::high_resolution_clock::now();
+
     // 2. Diferencias finitas centrales para los puntos internos
     for (size_t i = 1; i < N - 1; ++i)
     {
@@ -95,6 +101,13 @@ int main()
     omega[0] = (theta[1] - theta[0]) / h;
     omega[N - 1] = (theta[N - 1] - theta[N - 2]) / h;
 
+    auto t_fin = std::chrono::high_resolution_clock::now();
+    // =========================================================================
+    // FIN MEDICIÓN DE TIEMPO
+    // =========================================================================
+
+    std::chrono::duration<double, std::milli> tiempo_cpp_ms = t_fin - t_inicio;
+
     // 6. Guardar los resultados en resultados_cpp.csv
     std::ofstream out_file("resultados_cpp.csv");
     out_file << "t,x,y,v,theta,omega\n";
@@ -120,6 +133,11 @@ int main()
                   << std::setw(10) << theta[i] << " | "
                   << std::setw(12) << omega[i] << "\n";
     }
+
+    std::cout << "\n--------------------------------------------\n";
+    std::cout << "Tiempo de ejecución de cálculo numérico en C++: "
+              << std::fixed << std::setprecision(6) << tiempo_cpp_ms.count() << " ms\n";
+    std::cout << "--------------------------------------------\n";
 
     std::cout << "\n¡Cálculo en C++ finalizado! Resultados guardados en 'resultados_cpp.csv'.\n";
 
