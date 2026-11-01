@@ -121,3 +121,109 @@ Intersection Detection:
 - Algoritmo de Shamos-Hoey: Diseñado para resolver el problema de decisión; determina si existe al menos una intersección dentro de un conjunto de $N$ segmentos de línea utilizando una línea de barrido (sweep-line).
 - Algoritmo de Bentley-Ottmann: Extensión del método de línea de barrido que encuentra y reporta todas las intersecciones. Mantiene el estado de la línea de barrido (sweep-line status) en un árbol binario de búsqueda equilibrado y utiliza una cola de prioridad para gestionar los eventos de los puntos.
 - Estructuras de Jerarquía de Volúmenes Envolventes (BVH / Árboles AABB): Para polígonos o mallas 3D, bibliotecas como CGAL emplean árboles de cajas envolventes alineadas con los ejes (AABB Trees) y el paquete de arreglos planares (Arrangements) para descartar pares lejanos de forma eficiente antes de realizar cálculos exactos.
+
+La Triangulación de Delaunay conecta los 100 sensores formando una malla de triángulos óptima.
+Identificación de Vecinos Naturales: Dos sensores están conectados por una arista de Delaunay si y solo si sus celdas de Voronoi comparten una frontera en común. Esto define de forma matemática la adyacencia directa entre sensores sin necesidad de evaluar distancias lejanas.
+Diseño de Rutas de Comunicación Eficientes: Gracias a la propiedad del círculo vacío (ningún sensor queda dentro del círculo circunscrito de cualquier triángulo de Delaunay), la triangulación evita enlaces excesivamente largos y cruzados. Esto resulta ideal para establecer protocolos de enrutamiento inalámbrico por saltos (multi-hop routing), reduciendo el consumo de energía.
+Subgráficos de Red Optimamente Conectados: A partir de la triangulación de Delaunay se pueden extraer el Árbol de Expansión Mínimo (Minimum Spanning Tree - MST) y el Grafo de Vecindad Relativa (RNG), los cuales ayudan a transmitir datos a través de la red con el menor costo energético global.
+
+Pregunta 3.
+
+¿Qué problemas introduce la representación numérica IEEE-754 en los cálculos geométricos?
+La representación numérica IEEE-754 introduce imprecisiones estructurales en los cálculos geométricos al emplear aritmética de punto flotante con un número fijo de bits en la mantisa. 
+Debido a esta restricción de precisión finita, casi cualquier operación aritmética introduce un error de redondeo que se va acumulando a lo largo del cálculo. 
+Además, al restar cantidades casi idénticas se produce una cancelación catastrófica que magnifica las pequeñas variaciones numéricas en los bits de menor peso.
+Todo esto rompe las propiedades algebraicas ideales e induce inconsistencias lógicas que pueden degradar la estabilidad de los algoritmos.
+¿Qué significa que tres puntos sean colineales y por qué determinarlo computacionalmente
+puede ser difícil?
+La colinealidad indica que tres o más puntos se sitúan sobre una misma línea recta, lo que matemáticamente implica que el determinante de su matriz de orientación o el área del triángulo formado es exactamente cero. Evaluar esta condición en un ordenador resulta complejo porque los errores de redondeo impiden que el cálculo numérico arroje un cero exacto cuando los puntos están alineados o provienen de operaciones previas.
+Así, pequeños errores en los bits menos significativos provocan que el test de orientación devuelva signos inconsistentes, clasificando arbitrariamente un punto como situado a la izquierda o a la derecha de la recta.
+¿Qué son las configuraciones degeneradas (degenerate cases)?
+Las configuraciones degeneradas (degenerate cases) corresponden a casos límite o de frontera que violan las suposiciones teóricas de posición general, como ocurre con los puntos perfectamente colineales, los puntos cocíclicos en un plano, los segmentos superpuestos o las coordenadas duplicadas.
+Cuando estos escenarios degenerados coinciden con imprecisiones en punto flotante, los sistemas lineales y las evaluaciones geométricas resultan singulares o indeterminados.
+Si el programa no cuenta con una lógica que controle estas excepciones, el algoritmo puede incurrir en errores imprevistos, divisiones por cero o bucles infinitos.
+¿Cómo pueden los errores de redondeo alterar la detección de intersecciones, la orientación de
+puntos o la construcción de triangulaciones?
+En la detección de intersecciones, la orientación de puntos y la construcción de mallas, los errores de redondeo distorsionan la lógica topológica del problema. Una prueba de orientación errónea altera la posición relativa entre elementos, lo que en algoritmos de línea de barrido corrompe el orden de los eventos y conduce a ignorar o falsificar puntos de corte entre segmentos. 
+En la generación de triangulaciones de Delaunay, un fallo al evaluar si un punto pertenece al interior de un círculo provoca intercambios de aristas incorrectos o ciclos infinitos, produciendo mallas con elementos invertidos o solapados que rompen la estabilidad de la estructura.
+¿Qué diferencia existe entre exactitud geométrica, precisión numérica y robustez algorítmica?
+Para abordar estas dificultades es esencial diferenciar precisión numérica, exactitud geométrica y robustez algorítmica. La precisión numérica es una propiedad del tipo de dato y del hardware que determina cuántos bits están disponibles para la mantisa,mientras que la exactitud geométrica mide la diferencia entre las coordenadas calculadas por la máquina y las posiciones matemáticas reales.
+Por su parte, la robustez algorítmica representa la capacidad del programa para operar sin colapsar y mantener la consistencia lógica ante cualquier entrada válida.
+Para garantizar dicha robustez sin renunciar al rendimiento, librerías como CGAL aplican el paradigma de cómputo exacto, articulando cálculos rápidos en punto flotante con aritmética de precisión arbitraria.
+
+ Análisis del Experimento ConceptualConsideremos los puntos $A = (0, 0)$, $B = (1, 1)$ y $C = (2, 2 + \epsilon)$.Para clasificar geométricamente si estos tres puntos son colineales o no, se evalúa el determinante de la matriz de orientación en $2D$:
+
+ $$\det = \begin{pmatrix} A_x & A_y & 1 \\ B_x & B_y & 1 \\ C_x & C_y & 1 \end{pmatrix} = \begin{pmatrix} 0 & 0 & 1 \\ 1 & 1 & 1 \\ 2 & 2+\epsilon & 1 \end{pmatrix} = (1)(2 + \epsilon) - (1)(2) = \epsilon$$
+
+ Análisis matemático ideal:
+ Si $\epsilon = 0$, $\det = 0$, los puntos $A$, $B$ y $C$ son estrictamente colineales.
+ Si $\epsilon \neq 0$ (por ejemplo, $\epsilon = 10^{-18}$), $\det \neq 0$, por lo que los puntos son no colineales (el punto $C$ se encuentra ligeramente a la izquierda/arriba de la recta que pasa por $A$ y $B$).
+
+Comportamiento en la representación numérica IEEE-754:
+Efecto de absorción en punto flotante: En un sistema de precisión doble (double IEEE-754), la precisión de la máquina es de aproximadamente $\epsilon_m \approx 2.22 \times 10^{-16}$1. Al calcular $C_y = 2 + \epsilon$, si el valor de $\epsilon$ es menor que $2 \cdot \epsilon_m \approx 4.44 \times 10^{-16}$, los bits de menor peso de $\epsilon$ se desplazan a la derecha y se pierden por completo durante la suma2. Por lo tanto, en memoria la coordenada $C_y$ se almacena exactamente como $2.0$12.
+Clasificación errónea: Como consecuencia, la evaluación computacional del determinante devuelve $\det = 0$, clasificando los puntos como colineales cuando matemáticamente son no colineales.
+Cancelación catastrófica y volatilidad del signo: Si $\epsilon$ proviene de cálculos o transformaciones previas de valor cercano a la precisión límite de la máquina, la resta de números casi idénticos causa cancelación catastrófica. Esto magnifica los errores de redondeo acumulados en los últimos bits de la mantisa, pudiendo hacer que el determinante resulte positivo, cero o negativo de manera impredecible según el orden de las operaciones.
+
+Abordaje de CGAL: Predicados, Construcciones y Cálculo Exacto
+CGAL resuelve la fragilidad de la aritmética IEEE-754 mediante el Paradigma de Cómputo Exacto (Exact Computation Paradigm), garantizando la estabilidad lógica de los algoritmos sin sacrificar la velocidad de cálculo.
+
+Conceptos clave: Predicados vs. Construcciones
+Predicados (Predicates):
+Son funciones geométricas que devuelven un número discreto de decisiones orientativas o topológicas (como un valor booleano o un signo: POSITIVE, NEGATIVE, ZERO).
+Ejemplos: Determinar si tres puntos son colineales, evaluar si un punto está a la izquierda o derecha de una recta dirigida, o verificar si un punto está dentro de un círculo circunscrito (incircle test).
+Predicados Exactos: Garantizan que la decisión topológica tomada por el programa sea siempre 100% correcta matemáticamente. CGAL logra esto eficientemente mediante filtros de punto flotante (lazy evaluation): primero realiza el cálculo rápido en punto flotante empaquetando el resultado en un intervalo numérico; solo si el intervalo incluye al cero y el signo es ambiguo, CGAL conmuta dinámicamente a números de precisión arbitraria para desempatar con exactitud.
+Construcciones (Constructions):
+Son operaciones geométricas que generan nuevos objetos o coordenadas en el espacio a partir de objetos existentes.
+Ejemplos: Calcular las coordenadas del punto de intersección entre dos segmentos de línea no paralelos, o hallar el centroide de un triángulo.
+Construcciones Exactas: Aseguran que las coordenadas de los nuevos objetos geométricos creados se representen numéricamente de forma exacta (usando tipos de números racionales o algebraicos de precisión arbitraria) sin perder información por redondeos.
+
+Distinción entre Kernels en CGAL
+CGAL encapsula estos comportamientos en diferentes núcleos geométricos (geometry kernels), permitiendo al desarrollador elegir el nivel de exactitud según la necesidad del problema:
+1 . Kernel de Predicados Exactos y Construcciones Inexactas (ej. Exact_predicates_inexact_constructors_kernel / EPICK):
+Predicados: Exactos.
+Construcciones: Inexactas (los nuevos puntos construidos se aproximan y almacenan en coordenadas de punto flotante de double).
+Uso: Ideal cuando el algoritmo necesita tomar decisiones 100% robustas sobre puntos de entrada dados, pero los nuevos puntos creados no se utilizarán consecutivamente en nuevas decisiones cascada que dependan de precisión infinita.
+2 . Kernel de Predicados Exactos y Construcciones Exactas (ej. Exact_predicates_exact_constructors_kernel / EPECK):
+Predicados: Exactos.
+Construcciones: Exactas (los nuevos puntos creados se representan mediante tipos numéricos exactos de precisión arbitraria).
+Uso: Indispensable en algoritmos que encadenan construcciones (donde los puntos geométricos recién creados se vuelven a intersecual o procesar en etapas posteriores, como en el cálculo de arreglos planares, operaciones booleanas en 3D o polígonos de corte), evitando que la acumulación de errores de redondeo corrompa las estructuras de datos.
+
+Pregunta 4.
+
+
+¿Qué significa CGAL y cuál es el propósito de la librería?
+CGAL (Computational Geometry Algorithms Library) es una librería de software científico cuyo propósito es proporcionar acceso eficiente, confiable y estandarizado a un amplio conjunto de algoritmos y estructuras de datos geométricos.
+Su objetivo principal es resolver la brecha entre la geometría computacional teórica y las aplicaciones industriales, ofreciendo implementaciones robustas que no colapsan ante errores de redondeo o casos degenerados.
+¿Por qué está implementada principalmente en C++?
+CGAL está implementada principalmente en C++ debido a la potencia de la programación genérica mediante plantillas (templates) y el paradigma orientado a objetos.
+C++ permite lograr una abstracción de cero costo (zero-cost abstraction), procesando las plantillas durante la compilación para evitar penalizaciones de rendimiento en tiempo de ejecución.
+Esto permite desacoplar la lógica algorítmica de la representación numérica interna, ofreciendo además un control directo sobre la memoria y una ejecución eficiente en cálculos masivos.
+¿Qué es un Geometry Kernel y qué funciones desempeña?
+Un Geometry Kernel (núcleo geométrico) es la capa fundamental de CGAL que define los objetos primitivos no numéricos (puntos, vectores, segmentos, rectas, planos) y las operaciones elementales entre ellos. 
+Su función principal es aislar la representación numérica y algebraica subyacente de los algoritmos de alto nivel. De este modo, un algoritmo complejo como una triangulación puede reutilizarse con diferentes sistemas de coordenadas o tipos numéricos simplemente cambiando el núcleo geométrico.
+¿Qué son los predicates y las constructions?
+Dentro de la arquitectura de CGAL, los predicados (predicates) son funciones geométricas que toman decisiones discretas o topológicas sin crear nuevos objetos, como evaluar la orientación de tres puntos o determinar si dos segmentos se intersecan. 
+En cambio, las construcciones (constructions) son operaciones que calculan y generan nuevos objetos o coordenadas geométricos a partir de elementos existentes, como hallar el punto exacto de intersección de dos rectas o calcular un centroide.
+¿Qué diferencias existen entre Exact_predicates_inexact_constructions_kernel y Exact_predicates_ex6. ¿Qué ventajas y limitaciones tiene utilizar CGAL frente a implementar directamente los
+algoritmos?
+La diferencia entre los núcleos radica en cómo manejan las construcciones manteniéndolas exactas o aproximadas. 
+El núcleo Exact_predicates_inexact_constructors_kernel (EPICK) utiliza filtros de punto flotante para garantizar decisiones topológicas 100% exactas, pero almacena los nuevos puntos construidos con coordenadas aproximadas de tipo double. 
+Por su parte, el núcleo Exact_predicates_exact_constructors_kernel (EPECK) garantiza exactitud tanto en las decisiones como en la creación de nuevos objetos usando tipos numéricos de precisión arbitraria; esto resulta indispensable cuando se encadenan construcciones sucesivas en las que la acumulación de errores de redondeo corrompería las evaluaciones posteriores.
+Explore la documentación de CGAL e identifique cinco
+paquetes (packages) que podrían ser útiles en diferentes problemas de ingeniería. Para cada uno
+indique el problema que resuelve, los principales tipos de datos o algoritmos que ofrece y una
+posible aplicación
+
+El paquete de Triangulaciones (Triangulations) resuelve el problema de la discretización del espacio continuo en mallas triangulares o tetraédricas óptimas. 
+Proporciona estructuras como Delaunay_triangulation_2 y Delaunay_triangulation_3, junto con algoritmos de inserción incremental. Su aplicación principal radica en la generación de mallas para el Análisis por Elementos Finitos (FEA) y la Dinámica de Fluidos Computacional (CFD).
+El paquete de Diagramas de Voronoi (Voronoi Diagrams) aborda la partición del espacio en regiones o celdas de proximidad exclusiva asociadas a un conjunto de sitios.
+Ofrece la clase Voronoi_diagram_2 y adaptadores para consultar fronteras y sitios vecinos. En ingeniería, se aplica en robótica móvil para trazar rutas de navegación autónoma que mantengan al robot a la máxima distancia posible de los obstáculos.
+El paquete de Arreglos Planares (Arrangements) resuelve la construcción, mantenimiento y análisis de subdivisiones del plano generadas por curvas o segmentos que se cruzan. 
+Proporciona el tipo de dato Arrangement_2 y algoritmos de localización de puntos y barrido de línea. Resulta clave en la verificación de reglas de diseño (DRC) en circuitos integrados (VLSI) y operaciones booleanas en sistemas CAD.
+El paquete de Búsqueda Espacial (Spatial Searching) resuelve la organización e indexación de conjuntos masivos de puntos multidimensionales para consultas geométricas eficientes. 
+Ofrece estructuras como Kd_tree y algoritmos para la búsqueda de vecinos más cercanos (Nearest Neighbor Search). Se utiliza frecuentemente en Sistemas de Información Geográfica (GIS) y geomática para procesar nubes de puntos LiDAR.
+El paquete de Generación de Mallas y Reconstrucción de Formas (Mesh Generation & Shape Reconstruction) resuelve la conversión de datos tridimensionales no estructurados en mallas de superficie o volumétricas suaves y cerradas.
+Incluye algoritmos como Poisson_reconstruction y refinamiento de mallas. Se aplica en bioingeniería para reconstruir modelos 3D de órganos y huesos a partir de tomografías médicas (archivos DICOM) para simulaciones biomecánicas.
+
+
+
