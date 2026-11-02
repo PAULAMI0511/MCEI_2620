@@ -1,4 +1,5 @@
 #include <random>
+#include <cmath>
 #include <chrono>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -137,6 +138,60 @@ int main()
 
     std::cout << "\n--- Puntos colineales ---\n";
     analizar(colineales);
+
+        std::vector<Point> malla;
+    for (int i = 0; i < 10; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            malla.emplace_back(i, j);
+        }
+    }
+
+    std::cout << "\n--- Malla 10x10 (cocirculares) ---\n";
+    analizar(malla);
+
+
+        std::vector<Point> casi;
+    for (int i = 0; i < 100; ++i) {
+        double d = (i % 2 == 0) ? 1e-9 : 0;
+        casi.emplace_back(i, i + d);
+    }
+
+    std::cout << "\n--- Casi colineales ---\n";
+    analizar(casi);
+
+        std::cout << "\n--- Robustez: A=(0,0) B=(1,1) C=(2,2+eps) ---\n";
+    for (double eps : {1e-1, 1e-8, 1e-15, 4.4e-16, 2.2e-16, 1e-17}) {
+        Point A(0, 0), B(1, 1), C(2, 2 + eps);
+        auto o = CGAL::orientation(A, B, C);
+        double det = (B.x() - A.x()) * (C.y() - A.y()) - (B.y() - A.y()) * (C.x() - A.x());
+
+        std::cout << "eps=" << eps << "  det_ingenuo=" << det << "  CGAL: ";
+        if (o == CGAL::COLLINEAR)       std::cout << "COLINEAL\n";
+        else if (o == CGAL::LEFT_TURN)  std::cout << "IZQUIERDA\n";
+        else                            std::cout << "DERECHA\n";
+    }
+
+        std::cout << "\n--- Cuadricula 256x256 alrededor de (0.5, 0.5) ---\n";
+    const double u = std::ldexp(1.0, -53);
+    Point q(12, 12), r(24, 24);
+    int diferencias = 0, colineales = 0;
+
+    for (int i = 0; i < 256; ++i) {
+        for (int j = 0; j < 256; ++j) {
+            Point p(0.5 + i * u, 0.5 + j * u);
+
+            double det = (q.x() - p.x()) * (r.y() - p.y())
+                       - (q.y() - p.y()) * (r.x() - p.x());
+            int signo_ingenuo = (det > 0) - (det < 0);
+            int signo_cgal = static_cast<int>(CGAL::orientation(p, q, r));
+
+            if (signo_cgal == 0) ++colineales;
+            if (signo_ingenuo != signo_cgal) ++diferencias;
+        }
+    }
+
+    std::cout << "casos=65536  colineales exactos=" << colineales
+              << "  diferencias=" << diferencias << '\n';
 
     return 0;
 }
