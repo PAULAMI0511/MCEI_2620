@@ -1,3 +1,5 @@
+#include <random>
+#include <chrono>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <iterator>
@@ -11,6 +13,29 @@
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Point  = Kernel::Point_2;
 using Delaunay = CGAL::Delaunay_triangulation_2<Kernel>;
+
+void analizar(const std::vector<Point>& pts)
+{
+    auto t0 = std::chrono::steady_clock::now();
+
+    std::vector<Point> contorno;
+    CGAL::convex_hull_2(pts.begin(), pts.end(), std::back_inserter(contorno));
+
+    Delaunay triang;
+    triang.insert(pts.begin(), pts.end());
+
+    auto t1 = std::chrono::steady_clock::now();
+    double ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+
+    std::size_t aristas = std::distance(triang.finite_edges_begin(), triang.finite_edges_end());
+
+    std::cout << "n=" << pts.size()
+              << "  hull=" << contorno.size()
+              << "  V=" << triang.number_of_vertices()
+              << "  E=" << aristas
+              << "  F=" << triang.number_of_faces()
+              << "  tiempo(ms)=" << ms << '\n';
+}
 
 int main()
 {
@@ -50,6 +75,25 @@ int main()
         std::cout << p.x() << ' ' << p.y() << '\n';
     }
 
+
+        for (std::size_t n : {100, 500, 1000, 5000}) 
+        {
+        for (unsigned int semilla : {1, 2, 3, 42, 2026}) 
+        {
+        std::mt19937 generador(semilla);
+        std::uniform_real_distribution<double> distribucion(0.0, 100.0);
+
+        std::vector<Point> aleatorios;
+        for (std::size_t i = 0; i < n; ++i) {
+            double x = distribucion(generador);
+            double y = distribucion(generador);
+            aleatorios.emplace_back(x, y);
+        }
+
+        analizar(aleatorios);
+        }
+    }
+
     Delaunay dt;
     dt.insert(points.begin(), points.end());
 
@@ -65,12 +109,10 @@ int main()
     for (const auto& p : points) {
         fpuntos << p.x() << ' ' << p.y() << '\n';
     }
-
     std::ofstream fhull("hull.txt");
     for (const auto& p : hull) {
         fhull << p.x() << ' ' << p.y() << '\n';
     }
-
     std::ofstream faristas("aristas.txt");
     for (auto e = dt.finite_edges_begin(); e != dt.finite_edges_end(); ++e) {
         auto cara = e->first;
@@ -79,6 +121,22 @@ int main()
         Point q = cara->vertex((i + 2) % 3)->point();
         faristas << p.x() << ' ' << p.y() << ' ' << q.x() << ' ' << q.y() << '\n';
     }
+    analizar(points);
+
+        std::vector<Point> repetidos = points;
+    repetidos.insert(repetidos.end(), points.begin(), points.end());
+
+    std::cout << "\n--- Puntos repetidos ---\n";
+    analizar(repetidos);
+
+        std::vector<Point> colineales;
+    for (int i = 0; i < 100; ++i) 
+    {
+        colineales.emplace_back(i, 2 * i);  // puntos colineales: y = 2x
+    }
+
+    std::cout << "\n--- Puntos colineales ---\n";
+    analizar(colineales);
 
     return 0;
 }
