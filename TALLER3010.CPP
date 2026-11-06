@@ -1,5 +1,4 @@
 #include <random>
-#include <cmath>
 #include <chrono>
 #include <CGAL/convex_hull_2.h>
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -168,30 +167,9 @@ int main()
         std::cout << "eps=" << eps << "  det_ingenuo=" << det << "  CGAL: ";
         if (o == CGAL::COLLINEAR)       std::cout << "COLINEAL\n";
         else if (o == CGAL::LEFT_TURN)  std::cout << "IZQUIERDA\n";
-        else                            std::cout << "DERECHA\n";
+        else                            std::cout << "___\n";
     }
-
-        std::cout << "\n--- Cuadricula 256x256 alrededor de (0.5, 0.5) ---\n";
-    const double u = std::ldexp(1.0, -53);
-    Point q(12, 12), r(24, 24);
-    int diferencias = 0, colineales = 0;
-
-    for (int i = 0; i < 256; ++i) {
-        for (int j = 0; j < 256; ++j) {
-            Point p(0.5 + i * u, 0.5 + j * u);
-
-            double det = (q.x() - p.x()) * (r.y() - p.y())
-                       - (q.y() - p.y()) * (r.x() - p.x());
-            int signo_ingenuo = (det > 0) - (det < 0);
-            int signo_cgal = static_cast<int>(CGAL::orientation(p, q, r));
-
-            if (signo_cgal == 0) ++colineales;
-            if (signo_ingenuo != signo_cgal) ++diferencias;
-        }
-    }
-
-    std::cout << "casos=65536  colineales exactos=" << colineales
-              << "  diferencias=" << diferencias << '\n';
+    
 
     return 0;
 }

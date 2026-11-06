@@ -1,0 +1,2 @@
+¿Es razonable reducir las tres variables (T, I, V) a dos componentes principales sin perder una fracción importante de la variabilidad?
+
