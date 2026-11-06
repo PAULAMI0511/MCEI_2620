@@ -1,2 +1,123 @@
-¿Es razonable reducir las tres variables (T, I, V) a dos componentes principales sin perder una fracción importante de la variabilidad?
+octave-cli taller.m
 
+===== ACTIVIDAD 1: Matriz X, media, desviación y Z =====
+
+Matriz X (10x3):
+   48.0000    5.1000    2.1000
+   50.0000    5.3000    2.4000
+   51.0000    5.4000    2.5000
+   53.0000    5.7000    2.8000
+   55.0000    5.8000    3.0000
+   56.0000    6.0000    3.1000
+   58.0000    6.2000    3.5000
+   60.0000    6.3000    3.6000
+   61.0000    6.5000    3.8000
+   63.0000    6.7000    4.0000
+
+Media de cada variable [T I V]:
+   55.5000    5.9000    3.0800
+
+Desviación estándar [T I V]:
+   5.0166   0.5333   0.6374
+
+Matriz estandarizada Z:
+  -1.495025  -1.500000  -1.537603
+  -1.096352  -1.125000  -1.066908
+  -0.897015  -0.937500  -0.910010
+  -0.498342  -0.375000  -0.439315
+  -0.099668  -0.187500  -0.125519
+   0.099668   0.187500   0.031380
+   0.498342   0.562500   0.658973
+   0.897015   0.750000   0.815871
+   1.096352   1.125000   1.129668
+   1.495025   1.500000   1.443464
+
+===== ACTIVIDAD 2: Matriz de covarianza =====
+
+Matriz de covarianza S:
+   1.0000   0.9967   0.9973
+   0.9967   1.0000   0.9970
+   0.9973   0.9970   1.0000
+
+Interpretación de la matriz de covarianza:
+Las variables T, I y V están altamente correlacionadas entre sí, con valores cercanos a 1. Esto sugiere que hay redundancia en la información proporcionada por estas variables.
+(~0.997), lo que indica correlación lineal positiva muy fuerte entre T, I y V.
+
+===== ACTIVIDAD 3: Autovalores y autovectores =====
+
+Autovectores (columnas), sin ordenar:
+   0.6046   0.5487   0.5774
+   0.1730  -0.7980   0.5773
+  -0.7775   0.2492   0.5774
+
+Autovalores (diagonal de D), sin ordenar:
+   2.6223e-03   3.3881e-03   2.9940e+00
+
+Autovalores ordenados (PC1, PC2, PC3):
+   2.9940e+00   3.3881e-03   2.6223e-03
+
+Autovectores ordenados (columnas = PC1, PC2, PC3):
+   0.5774   0.5487   0.6046
+   0.5773  -0.7980   0.1730
+   0.5774   0.2492  -0.7775
+
+Suma de autovalores: 3.000000
+Traza de S:          3.000000
+Interpretación de los autovalores:
+Los autovalores representan la varianza explicada por cada componente principal. En este caso, el primer autovalor es significativamente mayor que los otros dos, lo que indica que la primera componente principal (PC1) captura la mayor parte de la varianza en los datos. Los otros dos autovalores son mucho menores, lo que sugiere que las componentes principales PC2 y PC3 contribuyen menos a la varianza total. Esto confirma que la mayoría de la información en los datos puede ser representada por la primera componente principal, y que las otras dos componentes principales   aportan menos información adicional.
+
+===== ACTIVIDAD 4: Proyección de los datos =====
+
+Varianza explicada individual:
+PC1: 99.7997 %
+PC2: 0.1129 %
+PC3: 0.0874 %
+
+Varianza explicada acumulada:
+PC1: 99.7997 %
+PC2: 99.9126 %
+
+ teniendo en cuaneta esto podemos reducir la dimensionalidad de los datos a dos componentes principales (PC1 y PC2) sin perder demasiada información, lo que facilita el análisis y la visualización de los datos. Y responderia la pregunta de:
+ 
+¿puedo reducir de 3 a 2 sin perder una fracción importante?
+ 
+ la respuesta seria que si, ya que solo se estaira perdiendo el 0.0874 % de la varianza total
+
+Interpretación de la varianza explicada:
+La primera componente principal (PC1) explica aproximadamente 99.7997 % de la varianza total, lo que indica que captura la mayor parte de la información en los datos. La segunda componente principal (PC2) explica un 0.1129 % adicional, y por ende descartamos la pc3 que explica un 0.0874 % de la varianza total. Esto sugiere que podemos reducir la dimensionalidad de los datos a dos componentes principales (PC1 y PC2) sin perder demasiada información, lo que facilita el análisis y la visualización de los datos.
+
+===== ACTIVIDAD 5: Proyección sobre PC1-PC2 =====
+
+Coordenadas de las muestras [PC1  PC2]:
+  -2.6169e+00  -6.4519e-03
+  -1.8985e+00   3.0337e-02
+  -1.5846e+00   2.9182e-02
+  -7.5787e-01  -8.3657e-02
+  -2.3826e-01   6.3662e-02
+   1.8390e-01  -8.7121e-02
+   9.9294e-01  -1.1234e-02
+   1.4220e+00   9.6987e-02
+   1.9347e+00  -1.4698e-02
+   2.5626e+00  -1.7007e-02
+
+
+Interpretación del gráfico PC1-PC2:
+Las muestras se ordenan de la 1 a la 10 a lo largo de PC1, reflejando un
+aumento gradual y simultáneo de T, I y V. Las muestras 1 y 10 son los extremos;
+2 y 3 son las más próximas. La dispersión en PC2 (8, 4 y 6) parece grande por la
+escala del eje (±0.1), pero es mínima frente a PC1 (±3), por lo que no hay atípicos.
+
+
+===== ACTIVIDAD 6: Recomendación =====
+
+Basado en el análisis de la PCA, se recomienda utilizar solo las dos primeras componentes principales (PC1 y PC2) para representar los datos, ya que estas capturan la mayor parte de la varianza (99.9126%). Esto simplificará el análisis y la visualización de los datos sin perder información significativa. con dos componentes principales, se puede realizar un análisis más eficiente y obtener conclusiones más claras sobre las relaciones entre las variables T, I y V. Además, la reducción de dimensionalidad facilita la interpretación de los resultados y permite identificar patrones y tendencias en los datos de manera más efectiva.
+Bajar la cantidad de variables a dos componentes principales (PC1 y PC2) es una estrategia adecuada para simplificar el análisis y la visualización de los datos, manteniendo la mayor parte de la información relevante.
+
+
+PREGUNTAS DE REFLEXIÓN:
+¿Qué problema aparecería si se aplica PCA directamente a las variables originales sin estandarizarlas, teniendo unidades °C, A y mm/s?
+PCA es sensible a la escala de las variables, por lo que si se aplicara directamente a las variables originales con diferentes unidades (°C, A y mm/s), las variables con mayor magnitud dominarían la varianza y afectarían los resultados de la PCA. Esto podría llevar a interpretaciones incorrectas y a una representación inadecuada de la estructura de los datos. Por lo tanto, es crucial estandarizar las variables antes de aplicar PCA para asegurar que todas contribuyan equitativamente al análisis.
+La varianza de T es unas 60 a 90 veces mayor que la de I y V. Sin estandarizar, PC1 quedaría casi alineada con T, y las otras dos variables prácticamente no influirían en la componente.
+
+Si PC1 y PC2 explican un porcentaje alto de la varianza, ¿podría perderse información útil para detectar una falla incipiente? Explique.
+La varianza alta no es lo mismo que tener información útil para detectar fallas incipientes. Aunque PC1 y PC2 expliquen un alto porcentaje de la varianza, podrían no capturar patrones sutiles o características específicas que indiquen una falla incipiente. Es posible que la información relevante para detectar fallas esté contenida en las componentes principales de menor varianza (como PC3), por lo que descartarlas podría llevar a perder señales importantes. Por lo tanto, es importante considerar el contexto del análisis y evaluar si las componentes principales seleccionadas son suficientes para los objetivos específicos del estudio.
